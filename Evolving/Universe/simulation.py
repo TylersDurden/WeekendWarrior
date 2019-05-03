@@ -34,11 +34,13 @@ def blobify(dims, activation, depth, show):
         plt.show()
     return state
 
-width = 450
-height = 450
-state = blobify([width, height],7,5, False)
 
-plt.imshow(state,'gray_r')
-plt.show()
-plt.imsave('ex.jpeg', state, cmap='gray_r')
-os.system('python blobs.py ex.jpeg;rm ex.jpeg')
+if 'blobs' in sys.argv:
+    width = 450
+    height = 450
+    state = blobify([width, height], 7, 5, False)
+
+    plt.imshow(state, 'gray_r')
+    plt.show()
+    plt.imsave('ex.jpeg', state, cmap='gray_r')
+    os.system('python blobs.py ex.jpeg;rm ex.jpeg')
