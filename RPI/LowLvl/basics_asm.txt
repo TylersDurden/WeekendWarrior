@@ -1,0 +1,26 @@
+@ADDER.s ARM Assembly Language Program
+
+             .global _start
+_start:      MOV    R1, #0x02
+             MOV    R2, #0x03
+             ADD    R3, R2, R1
+             MOV    R7, #1
+             SVC    0
+
+compiling :
+as -o adder.o adder.s
+ld =o adder adder.o
+
+
+check output:
+~/asm $ ./example
+~/asm $ echo $?
+
+using gdb:
+(gdb) b <#ln>   SET BREAK_POINT
+(gdb) l         SHOW SRC
+(gdb) disas     disassemble
+(gdb) run       run program
+(gdb) i r       examine registers
+(gdb) cont      continue executing
+(gdb) x/8xw <addr> display eight words in hexadecimal starting at addr

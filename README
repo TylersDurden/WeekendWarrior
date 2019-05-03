@@ -1,0 +1,57 @@
+# Content
+├── Crawlers
+│   ├── crawl.py
+│   ├── utils.py
+│   └── utils.pyc
+├── Evolving
+│   ├── Universe
+│   │   ├── blobs.py
+│   │   ├── miniverse.py
+│   │   ├── simulation.py
+│   │   ├── utility.py
+│   │   └── utility.pyc
+│   └── Walkers
+│       ├── eager.py
+│       ├── state_machine.py
+│       ├── utils.py
+│       └── utils.pyc
+├── H4CK
+│   ├── h4k.py
+│   └── NLP
+│       ├── BoW_Hist.png
+│       ├── knowledge.py
+│       ├── knowledge.pyc
+│       ├── utils.py
+│       ├── utils.pyc
+│       ├── wordcollector.py
+│       └── words.txt
+├── LICENSE
+├── README
+└── RPI
+    ├── Vision
+    │   ├── alphabet
+    |       |_ IMAGES [26 LETTERS/JPEGS]
+    │   ├── image_capt.py
+    │   ├── image_proc.py
+    │   ├── letters.py
+    │   ├── rpi.py
+    │   ├── utility.py
+    │   └── vision.wl
+    └── wolfram.txt
+
+# Crawlers
+scratch pad folder for random walk stuff
+
+# Evolving
+Split into two section, one for 'game of life' style
+simulations for time evolving states and the other for
+more developed random walk integrated simulations.
+
+# H4CK
+NLP related stuff, and assorted scripts that 'hack' together
+bits of different projects.
+
+# RPI
+Raspberry Pi Projects, including automated image capture and
+transfer. Also some fun with trying to develop bare bones letter
+recognition system. 
