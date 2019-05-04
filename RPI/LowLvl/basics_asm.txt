@@ -14,7 +14,7 @@ ld =o adder adder.o
 
 check output:
 ~/asm $ ./example
-~/asm $ echo $?
+~/asm $ ech
 
 using gdb:
 (gdb) b <#ln>   SET BREAK_POINT
