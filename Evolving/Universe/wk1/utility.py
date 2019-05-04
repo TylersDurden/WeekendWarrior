@@ -82,7 +82,7 @@ def ind2sub(index,dims):
             if index==ii:
                 return [x,y]
             ii +=1
-
+    return [x,y]
 
 def add_random_points_color(state,n_pts,value):
     for t in range(n_pts):

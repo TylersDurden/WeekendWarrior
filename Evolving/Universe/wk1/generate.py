@@ -76,14 +76,17 @@ def color_automata(state, config):
     a = animation.ArtistAnimation(f, simulation, interval=60,blit=True,repeat_delay=900)
     plt.show()
 
+def main():
+    config = {'nred':550,
+              'ngreen':550,
+              'nblue':550,
+              'width':100,
+              'height':100,
+              'ngenerations':20,
+              'ract':3,'gact':3,'bact':3, # Activation Points
+              'show_init':False}
+    initial_state = initialize_configuration(config)
+    color_automata(initial_state, config)
 
-config = {'nred':550,
-          'ngreen':550,
-          'nblue':550,
-          'width':100,
-          'height':100,
-          'ngenerations':20,
-          'ract':3,'gact':3,'bact':3, # Activation Points
-          'show_init':False}
-initial_state = initialize_configuration(config)
-color_automata(initial_state, config)
+if __name__ == '__main__':
+    main()
