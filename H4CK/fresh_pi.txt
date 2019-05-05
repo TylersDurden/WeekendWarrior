@@ -1,0 +1,14 @@
+# Copying the image to the SD card
+  In a terminal window, write the image to the card with the command below, making sure you replace the input file if= argument with the path to your .img file, and the /dev/sdX in the output file of= argument with the correct device name. 
+
+dd bs=4m if=2018-11-13-raspbian-stretch.img of=/dev/sdX conv=fsync
+^^ Means do drive with block size 4MB, using raspbian_stretch.img, into /dev/sdX
+
+# 2 - In - 1 
+Although not for the faint of heart, the two operations of unzipping the
+raspian image, and writing it to an sd card can be done with one command by 
+piping the output of the first, into the second. 
+
+unzunip -p 2018-11-13-raspbian-stretch.zip | sudo dd of=/dev/sdX bs=4M conv=fsync
+
+

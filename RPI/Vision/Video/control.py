@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
-from threading import Thread
 import subprocess
 import paramiko
-import signal
 import utils
 import time
 import sys
@@ -39,6 +37,22 @@ def remote_photography(file_name, remote_host, passwd, remote_ip):
     return plt.imread(file_name)
 
 
+def remote_video(uname, passwd, remote_ip, file_name, show):
+    t0 = time.time()
+    ssh_command('192.168.1.217', uname, passwd, snap_video, True)
+    cmd = 'sshpass -p' + passwd + ' sftp ' + uname + '@' + \
+          remote_ip + ':/home/' + uname + '/video_in.h264 $PWD'
+    os.system(cmd)
+    print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
+    os.system(unpack_vid + file_name+'; rm video_in.h264')
+    if show:
+        p = subprocess.Popen(["xdg-open", file_name], stdout=subprocess.PIPE)
+        p.communicate()
+        return p.returncode
+    else:
+        return 0
+
+
 def credential_manager():
     os.system('find -name encrypted.txt | cut -b 3- >> hasname.txt')
     if utils.swap('hasname.txt', True).pop() == 'encrypted.txt':
@@ -48,30 +62,46 @@ def credential_manager():
     return uname, passwd
 
 
+def create_timestamp():
+    date = time.localtime(time.time())
+    mo = str(date.tm_mon)
+    day = str(date.tm_wday)
+    yr = str(date.tm_year)
+
+    hr = str(date.tm_hour)
+    min = str(date.tm_min)
+    sec = str(date.tm_sec)
+
+    date = mo + '/' + day + '/' + yr
+    timestamp = hr + ':' + min + ':' + sec
+    return date, timestamp
+
+
 def main():
+    # First get the a current timestamp
+    date, timestamp = create_timestamp()
+
     # Get Remote Host Password for session use
     uname, passwd = credential_manager()
     print '\033[1m\033[32m\t\t~ Credentials Stored ~\033[0m'
     remote_ip = '192.168.1.217'
 
     # Snap Image on remote system and transfer it to current dir
-    if 'snap_demo' in sys.argv:
+    if 'snap_img' in sys.argv:
         t0 = time.time()
         image = remote_photography('example.jpeg', uname, passwd, remote_ip)
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
         plt.imshow(image)
         plt.show()
 
+    # snap a video
     if 'snap_vid' in sys.argv:
-        t0 = time.time()
-        ssh_command('192.168.1.217', uname, passwd, snap_video, True)
-        cmd = 'sshpass -p' + passwd + ' sftp ' + uname + '@' + \
-              remote_ip + ':/home/' + uname + '/video_in.h264 $PWD'
-        os.system(cmd)
-        print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
-        os.system(unpack_vid + 'test.mp4; rm video_in.h264')
-        p = subprocess.Popen(["xdg-open", "test.mp4"], stdout=subprocess.PIPE)
-        p.communicate()
+        if 'show' in sys.argv:
+            show = True
+        else:
+            show = False
+        remote_video(uname, passwd, remote_ip, date.replace('/','_')+'-'+\
+                     timestamp.replace(':','_')+'_test.mp4', show)
 
 
 if __name__ == '__main__':

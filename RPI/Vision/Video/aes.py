@@ -35,3 +35,6 @@ if '-d' in sys.argv:
     # decode the encoded string
     decoded = DecodeAES(cipher, encoded)
     print 'Result:', decoded
+
+if 'clear' in sys.argv:
+    os.system('rm encrypted.txt; rm key.txt')
