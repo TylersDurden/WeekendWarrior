@@ -30,7 +30,22 @@ def parse_btc_query(btc_raw,verbose):
             data['prices'].append(price)
     return data
 
-log_name = ''
+
+def create_datestr():
+    localtime = time.localtime(time.time())
+    mm = str(localtime.tm_mon)
+    dd = str(localtime.tm_mday)
+    yy = str(localtime.tm_year)
+
+    hh = str(localtime.tm_hour)
+    min = str(localtime.tm_min)
+
+    datestr = 'Prices/market' + mm + yy + dd + '_' + hh + '-' + min + '.txt'
+    return datestr
+
+
+log_name = create_datestr()
+print '\033[1mCreating LOG %s \033[0m' % (log_name)
 db = False
 if not os.path.isdir('Prices/'):
     print 'Making Price Tracking DataBase'
@@ -42,7 +57,7 @@ else:
 t0 = time.time()
 pause = 10
 current_prices = parse_btc_query(query(btc_resource_1), True)
-if not os.path.isfile('Prices/'+log_name):
+if os.path.isfile('Prices/'+log_name):
     print '\t\t** Creating Prices/ Directory For Logging **'
     log_name = 'Prices/' + current_prices['date'].replace(' ', '_') + '.txt'
     print 'touch '+log_name
