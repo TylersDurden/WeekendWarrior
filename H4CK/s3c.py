@@ -1,9 +1,6 @@
 from threading import Thread
-import wireless
 from scapy.all import *
-import socket
 import time
-import sys
 import os
 
 

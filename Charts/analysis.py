@@ -38,8 +38,10 @@ def unpack_price_data():
                 except IndexError:
                     pass
                 try:
-                    buffer.append(float(line.split('.')[0] + '.' + line.split('.')[1]))
-                except IndexError:
+                    ln = float(line.split('.')[0]) + float(line.split('.')[1])
+                    print ln
+                    buffer.append(ln)
+                except IndexError and ValueError:
                     pass
                 try:
                     if len(line.split('*')) > 20:
@@ -60,5 +62,12 @@ lines = []
 for k in price_data.keys():
     for point in price_data[k]:
         lines.append(point)
+
+trend = np.array(lines)
+print 'Min Price: ' + str(trend.min())
+print 'Max Price: ' + str(trend.max())
+print 'Mean Price: ' + str(trend.mean())
+print 'Deviation: ' + str(trend.std())
+
 plt.plot(np.array(lines).flatten(),'o')
 plt.show()

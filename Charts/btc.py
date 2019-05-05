@@ -66,7 +66,7 @@ if len(sys.argv) < 2:
     else:
         db = True
 
-<<<<<<< HEAD
+
     t0 = time.time()
     pause = 10
     current_prices = parse_btc_query(query(btc_resource_1), True)
@@ -113,7 +113,8 @@ else:
         print str(dt) + 's Elapsed'
         os.system('echo "****************************************" >> ' + log_name)
         pass
-=======
+
+
 t0 = time.time()
 pause = 10
 current_prices = parse_btc_query(query(btc_resource_1), True)
@@ -136,4 +137,3 @@ while dt < 36000:
     time.sleep(pause)
     print str(dt)+'s Elapsed'
 
->>>>>>> 26c9c2ba99db6c422821b0e88cf7ddf9f3a885b3
