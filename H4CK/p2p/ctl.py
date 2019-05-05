@@ -1,5 +1,4 @@
 from Crypto.Random import get_random_bytes
-import pysnmp as snmp
 import numpy as np
 import paramiko
 import socket
@@ -32,6 +31,7 @@ class Host:
     geo_loc = ''
     os = ''
     os_info = {}
+
     # OS Environ Vars
     PATH = ''
     HOME = ''
