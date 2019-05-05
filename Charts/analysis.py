@@ -28,6 +28,7 @@ def unpack_price_data():
         if f != 'price_data.txt':
             buffer = []
             n_samples = 0
+
             for line in swap(f, False):
                 try:
                     if len(line.split('Price LOG')) >= 2:
@@ -37,7 +38,7 @@ def unpack_price_data():
                 except IndexError:
                     pass
                 try:
-                    buffer.append(line.split('.')[0] + '.' + line.split('.')[1])
+                    buffer.append(float(line.split('.')[0] + '.' + line.split('.')[1]))
                 except IndexError:
                     pass
                 try:
@@ -45,9 +46,19 @@ def unpack_price_data():
                         prices[n_samples] = buffer
                         n_samples += 1
                         buffer = []
+
                 except IndexError:
                     pass
     return content, prices
 
 
 content, price_data = unpack_price_data()
+print np.array(price_data.keys()).shape
+print np.array(price_data.values()).shape
+f = plt.figure()
+lines = []
+for k in price_data.keys():
+    for point in price_data[k]:
+        lines.append(point)
+plt.plot(np.array(lines).flatten(),'o')
+plt.show()
