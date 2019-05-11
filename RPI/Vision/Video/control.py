@@ -39,7 +39,7 @@ def remote_photography(file_name, remote_host, passwd, remote_ip):
 
 def remote_video(uname, passwd, remote_ip, file_name, show):
     t0 = time.time()
-    ssh_command('192.168.1.217', uname, passwd, snap_video, True)
+    ssh_command('192.168.1.229', uname, passwd, snap_video, True)
     cmd = 'sshpass -p' + passwd + ' sftp ' + uname + '@' + \
           remote_ip + ':/home/' + uname + '/video_in.h264 $PWD'
     os.system(cmd)
@@ -84,7 +84,7 @@ def main():
     # Get Remote Host Password for session use
     uname, passwd = credential_manager()
     print '\033[1m\033[32m\t\t~ Credentials Stored ~\033[0m'
-    remote_ip = '192.168.1.217'
+    remote_ip = '192.168.1.229'
 
     # Snap Image on remote system and transfer it to current dir
     if 'snap_img' in sys.argv:

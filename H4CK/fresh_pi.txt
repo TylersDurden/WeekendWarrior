@@ -4,6 +4,11 @@
 dd bs=4m if=2018-11-13-raspbian-stretch.img of=/dev/sdX conv=fsync
 ^^ Means do drive with block size 4MB, using raspbian_stretch.img, into /dev/sdX
 
+Or:
+sudo dd if=NameOfImageToWrite.img of=/dev/rdiskNUMBER bs=4m
+Or:
+xzcat kali-$version-rpi2.img.xz | dd of=/dev/sdb bs=512k
+
 # 2 - In - 1 
 Although not for the faint of heart, the two operations of unzipping the
 raspian image, and writing it to an sd card can be done with one command by 
