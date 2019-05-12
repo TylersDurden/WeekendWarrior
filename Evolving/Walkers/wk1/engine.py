@@ -1,4 +1,3 @@
-import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 import utils
@@ -92,7 +91,6 @@ def main():
 
     print "\033[1m\033[34mFINISHED\t   \033[0m\033[1m[" + \
           str(time.time() - t0) + 's Elapsed\033[0m]'
-
 
 
 if __name__ == '__main__':
