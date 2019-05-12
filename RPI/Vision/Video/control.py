@@ -7,7 +7,7 @@ import sys
 import os
 
 snap_image = 'raspistill -t 1 -o test.jpeg'
-snap_video = 'raspivid -o video_in.h264 -t 5000'
+snap_video = 'raspivid -o video_in.h264 -t 5000 -w 800 -h 800'
 unpack_vid = 'ffmpeg -loglevel quiet -r 30 -i video_in.h264 -vcodec copy '
 
 
