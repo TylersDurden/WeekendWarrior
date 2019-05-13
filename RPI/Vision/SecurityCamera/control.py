@@ -11,9 +11,11 @@ import os
 
 snap_image = 'raspistill -t 1 -o test.jpeg'
 snap_video = 'raspivid -o video_in.h264 -t 5000'
-snap_lapse = 'raspistill -t 30000 -tl 200 -o image%03d.jpg'
+snap_lapse = 'raspistill -t 30000 -tl 200 -o image%03d.png'
+snap_stream = 'raspivid -t 0 -w 1280 -h 720 -fps 20 -o - | nc -k -l '
+recv_stream = 'mplayer -fps 200 -demuxer h264es ffmpeg://tcp://'
 unpack_vid = 'ffmpeg -loglevel quiet -r 30 -i video_in.h264 -vcodec copy '
-pack_vid = 'ffmpeg -r 1/5 -i image%03d.jpg -c:v libx264 -vf fps=25 -pix_fmt yuv420p out.mp4'
+pack_vid = 'ffmpeg -i image%03d.png -c:v libx264 -vf fps=25 -pix_fmt yuv420p out.mp4'
 clean_pics = "find -name '*.jpg' | cut -b 3- | while read n; do rm $n; done"
 
 
@@ -22,12 +24,13 @@ def ssh_command(ip, user, passwd, command, verbose):
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(ip, username=user, password=passwd)
     ssh_session = client.get_transport().open_session()
+    response = ''
     if ssh_session.active:
         ssh_session.exec_command(command)
-        response = ssh_session.recv(1024)
         if verbose:
+            response = ssh_session.recv(1024)
             print response
-    return response
+            return response
 
 
 def remote_photography(file_name, remote_host, passwd, remote_ip):
@@ -51,6 +54,22 @@ def remote_video(uname, passwd, remote_ip, file_name, show):
     os.system(cmd)
     print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
     os.system(unpack_vid + file_name+'; rm video_in.h264')
+    if show:
+        p = subprocess.Popen(["xdg-open", file_name], stdout=subprocess.PIPE)
+        p.communicate()
+        return p.returncode
+    else:
+        return 0
+
+
+def remote_lapse(uname, passwd, remote_ip, file_name, show):
+    t0 = time.time()
+    ssh_command('192.168.1.229', uname, passwd, snap_video, True)
+    cmd = 'sshpass -p' + passwd + ' sftp ' + uname + '@' + \
+          remote_ip + ':/home/' + uname + '/out.mp4 $PWD'
+    os.system(cmd)
+    print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
+    os.system(unpack_vid + file_name+'; rm out.mp4')
     if show:
         p = subprocess.Popen(["xdg-open", file_name], stdout=subprocess.PIPE)
         p.communicate()
@@ -106,6 +125,10 @@ def main():
          # TODO: Delete the time lapse photos!
         ssh_command(remote_ip, uname, passwd, clean_pics, False)
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
+        show = False
+        if 'show' in sys.argv:
+            show = True
+        remote_lapse(uname,passwd,remote_ip,'time_lapse.mp4',True)
 
     # snap a video
     if 'snap_vid' in sys.argv:
@@ -118,13 +141,16 @@ def main():
 
     if 'live' in sys.argv:
         t0 = time.time()
-        # Try to make it as fast as possible to show images in real time
-        images = []
-        for i in range(100):
-            os.system('python control.py snap_vid')
-            images.append([plt.imshow(plt.imread('example.jpeg'))])
-            os.system('rm example.jpeg')
-
+        port = '2222'
+        print '\033[1m\033[31m==========  STARTING LIVE STREAM  =============\033[0m'
+        start = Thread(target=ssh_command, args=(remote_ip,
+                                                  uname,
+                                                  passwd,
+                                                 snap_stream + port,
+                                                 False))
+        start.start()
+        start.join()
+        os.system(recv_stream+remote_ip+':'+port)
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
 
     if 'cmd' in sys.argv:
