@@ -10,13 +10,17 @@ import sys
 import os
 
 snap_image = 'raspistill -t 1 -o test.jpeg'
-snap_video = 'raspivid -o video_in.h264 -t 5000'
+snap_video = 'raspivid -o video_in.h264  -w 1280 -h 720 -t 5000'
 snap_lapse = 'raspistill -t 30000 -tl 200 -o image%03d.png'
 snap_stream = 'raspivid -t 0 -w 1280 -h 720 -fps 20 -o - | nc -k -l '
 recv_stream = 'mplayer -fps 200 -demuxer h264es ffmpeg://tcp://'
 unpack_vid = 'ffmpeg -loglevel quiet -r 30 -i video_in.h264 -vcodec copy '
 pack_vid = 'ffmpeg -i image%03d.png -c:v libx264 -vf fps=25 -pix_fmt yuv420p out.mp4'
 clean_pics = "find -name '*.jpg' | cut -b 3- | while read n; do rm $n; done"
+
+
+snap_webstream = ''
+recv_webstream = ''
 
 
 def ssh_command(ip, user, passwd, command, verbose):
@@ -31,6 +35,7 @@ def ssh_command(ip, user, passwd, command, verbose):
             response = ssh_session.recv(1024)
             print response
             return response
+    return response
 
 
 def remote_photography(file_name, remote_host, passwd, remote_ip):
@@ -90,7 +95,7 @@ def credential_manager():
 def create_timestamp():
     date = time.localtime(time.time())
     mo = str(date.tm_mon)
-    day = str(date.tm_wday)
+    day = str(date.tm_mday)
     yr = str(date.tm_year)
 
     hr = str(date.tm_hour)
@@ -100,6 +105,11 @@ def create_timestamp():
     date = mo + '/' + day + '/' + yr
     timestamp = hr + ':' + min + ':' + sec
     return date, timestamp
+
+
+def live_stream(remote_ip, port):
+    os.system(recv_stream + remote_ip + ':' + port)
+    return False
 
 
 def main():
@@ -142,15 +152,18 @@ def main():
     if 'live' in sys.argv:
         t0 = time.time()
         port = '2222'
-        print '\033[1m\033[31m==========  STARTING LIVE STREAM  =============\033[0m'
-        start = Thread(target=ssh_command, args=(remote_ip,
+        print '\033[1m\033[36m==========  STARTING LIVE STREAM  =============\033[0m'
+        capture = Thread(target=ssh_command, args=(remote_ip,
                                                   uname,
                                                   passwd,
                                                  snap_stream + port,
                                                  False))
-        start.start()
-        start.join()
-        os.system(recv_stream+remote_ip+':'+port)
+        watch = Thread(target=live_stream, args=(remote_ip, port))
+        capture.start()
+        capture.join()
+        print '\033[1m\033[35m======  OPENING LIVE STREAM  WINDOW =======\033[0m'
+        watch.start()
+        watch.join()
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
 
     if 'cmd' in sys.argv:
@@ -160,6 +173,34 @@ def main():
             cmd += arg+' '
         answer = ssh_command(remote_ip, uname, passwd, cmd, True)
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
+
+    if 'run' in sys.argv:
+        t0 = time.time()
+        running = True
+        dt = 0
+        T = 100
+
+        date, timestamp = create_timestamp()
+        print date +'\t\t'+timestamp
+        cDir = os.getcwd()+'/'+date.replace('/','_')
+        if os.path.isdir(cDir):
+            print len(os.listdir(cDir))
+        else:
+            os.mkdir(cDir)
+
+        f = plt.figure()
+        frames = []
+        while running or dt <= T:
+            try:
+                os.system('python ../Video/control.py snap_img')
+                snap = np.array(plt.imread('example.jpeg')).astype(np.float)
+                print '\033[1m\033[31m'+str(dt)+'s!\033[0m'
+                frames.append([plt.imshow(snap)])
+                dt = (time.time() - t0)
+            except KeyboardInterrupt:
+                running = False
+        a = animation.ArtistAnimation(f, frames, interval=100,blit=True,repeat_delay=1000)
+        plt.show()
 
 
 if __name__ == '__main__':
