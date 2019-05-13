@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.ndimage as ndi
 import numpy as np
 import utility
+import agent
 import time
 
 
@@ -58,10 +59,8 @@ def main():
     print '\033[1m\033[31mFINISHED\t\033[0m\033[1m[' + str(dt) + 's Elapsed]\033[0m'
     test_kernel(ex_config, k1, True)
 
-
-
-
-
+    random_start = utility.spawn_random_point(ex_config['state'])
+    agent.Agent(random_start[0], random_start[1], ex_config['state'])
 
 
 if __name__ == '__main__':

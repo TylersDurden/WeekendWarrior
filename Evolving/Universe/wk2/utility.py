@@ -128,4 +128,14 @@ def build_map_color(width, height, n_points):
         [x,y] = spawn_random_point(np.zeros((width, height)))
         state[x,y,:] = [1,0,0]
     return state
+
+
+def sub2ind(subs, shape):
+    ii = 0
+    state = np.zeros(shape)
+    state[subs[0],subs[1]] = 1
+    for cell in state.flatten():
+        if cell == 1:
+            return ii
+        ii += 1
 # EOF
