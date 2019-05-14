@@ -1,7 +1,7 @@
+from matplotlib.animation import FFMpegWriter
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 from threading import Thread
-import numpy as np
 import subprocess
 import paramiko
 import utils
@@ -45,9 +45,6 @@ def remote_photography(file_name, remote_host, passwd, remote_ip):
     cmd = 'sshpass -p ' + passwd + ' sftp ' + remote_host + '@' +\
           remote_ip + ':/home/' + remote_host + '/test.jpeg $PWD'
     os.system(cmd)
-    # Remove it from remote system
-    ssh_command(remote_ip, remote_host, passwd, 'rm test.jpeg', False)
-    os.system('mv test.jpeg '+file_name)
     return plt.imread(file_name)
 
 
@@ -176,9 +173,8 @@ def main():
 
     if 'run' in sys.argv:
         t0 = time.time()
-        running = True
         dt = 0
-        T = 100
+        T = 240
 
         date, timestamp = create_timestamp()
         print date +'\t\t'+timestamp
@@ -190,16 +186,16 @@ def main():
 
         f = plt.figure()
         frames = []
-        while running or dt <= T:
-            try:
-                os.system('python ../Video/control.py snap_img')
-                snap = np.array(plt.imread('example.jpeg')).astype(np.float)
-                print '\033[1m\033[31m'+str(dt)+'s!\033[0m'
-                frames.append([plt.imshow(snap)])
-                dt = (time.time() - t0)
-            except KeyboardInterrupt:
-                running = False
+        while dt <= T:
+            dt = (time.time() - t0)
+            snap = remote_photography('test.jpeg',uname,passwd,remote_ip)
+            print '\033[1m\033[31m'+str(dt)+'s!\033[0m'
+            frames.append([plt.imshow(snap)])
         a = animation.ArtistAnimation(f, frames, interval=100,blit=True,repeat_delay=1000)
+        if 'save' in sys.argv:
+            plt.title('TimeLapse ['+date+' '+timestamp+']')
+            w = FFMpegWriter(fps=5,bitrate=1800)
+            a.save('TimeLapse '+date.replace('/','_')+timestamp.replace(':','_')+'.mp4',writer=w)
         plt.show()
 
 

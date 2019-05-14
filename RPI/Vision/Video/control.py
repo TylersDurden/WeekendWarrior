@@ -91,8 +91,9 @@ def main():
         t0 = time.time()
         image = remote_photography('example.jpeg', uname, passwd, remote_ip)
         print '\033[1m\033[31m' + str(time.time() - t0) + 's Elapsed]\033[0m'
-        plt.imshow(image)
-        plt.show()
+        if 'show' in sys.argv:
+            plt.imshow(image)
+            plt.show()
 
     # snap a video
     if 'snap_vid' in sys.argv:
