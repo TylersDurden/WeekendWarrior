@@ -1,6 +1,3 @@
-from matplotlib.animation import FFMpegWriter
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
@@ -96,66 +93,4 @@ def add_random_points(state, n_pts):
         [x, y] = spawn_random_point(state)
         state[x, y] = 1
     return state
-
-
-def animate_walk(steps,state,frame_rate,save,name):
-    f = plt.figure()
-    film = []
-    for step in steps:
-        if state[step[0], step[1]] == 1:
-            state[step[0], step[1]] = 0
-        else:
-            state[step[0], step[1]] = 1
-        film.append([plt.imshow(state, 'gray_r')])
-    a = animation.ArtistAnimation(f,film,interval=frame_rate,blit=True,repeat_delay=900)
-    if save:
-        w = FFMpegWriter(fps=frame_rate, bitrate=1800)
-        a.save(name, writer=w)
-    plt.show()
-    return state
-
-
-def simulate_walk(steps, state):
-    for step in steps:
-        if state[step[0], step[1]] == 1:
-            state[step[0], step[1]] = 0
-        else:
-            state[step[0], step[1]] = 1
-    return state
-
-
-def build_map(width, height, n_points):
-    state = np.zeros((width, height))
-    for pt in range(n_points):
-        [x,y] = spawn_random_point(state)
-        state[x,y] = 1
-    return state
-
-
-def build_map_color(width, height, n_points):
-    state = np.zeros((width, height, 3))
-    for pt in range(n_points):
-        [x,y] = spawn_random_point(np.zeros((width, height)))
-        state[x,y,:] = [1,0,0]
-    return state
-
-
-def displacement(ptA, ptB):
-    dx = ptA[0]-ptB[0]
-    dy = ptA[1]-ptB[1]
-    try:
-        r = np.sqrt((dx**2)+(dy**2))
-    except RuntimeWarning:
-        r = 0
-    return r
-
-
-def count_tiles(state):
-    tiles = []
-    i = 0
-    for cell in state.flatten():
-        if cell != 0:
-            tiles.append(ind2sub(i, state.shape))
-        i += 1
-    return tiles
 # EOF

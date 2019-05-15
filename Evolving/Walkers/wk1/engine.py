@@ -15,7 +15,7 @@ def eval_init(config):
     config['stop'] = config['steps'].pop(len(config['steps'])-1)
     disp = utils.displacement(config['start'], config['stop'])
     config['state'] = utils.simulate_walk(config['steps'], config['state'])
-    score = utils.count_tiles(config['state'])
+    score = np.array(config['state']).nonzero()
     return [disp, score]
 
 
