@@ -19,10 +19,6 @@ pack_vid = 'ffmpeg -i image%03d.png -c:v libx264 -vf fps=25 -pix_fmt yuv420p out
 clean_pics = "find -name '*.jpg' | cut -b 3- | while read n; do rm $n; done"
 
 
-snap_webstream = ''
-recv_webstream = ''
-
-
 def ssh_command(ip, user, passwd, command, verbose):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
