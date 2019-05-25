@@ -55,7 +55,7 @@ def prep_word_list(words):
     return better
 
 
-TARGET = '192.168.1.217'
+TARGET = '192.168.1.229'
 uname = 'pi'
 raw_word_list = swap('../NLP/words.txt', False)
 print '\033[1m\033[31m' + str(len(raw_word_list)) +\
@@ -69,12 +69,5 @@ for length in np.arange(2,10,1):
 print str(len(most_common)) + ' word list compiled of most probably words '
 most_common.reverse()
 
-# print most_common[100:120]
-# for word in most_common[100:120]:
-#     chars = list(word)
-# if 'propellor' in most_common:
-#     i = 0
-#     for word in most_common:
-#         if word == 'propel':
-#             print 'Index: ' + str(i)
-#         i += 1
+
+
