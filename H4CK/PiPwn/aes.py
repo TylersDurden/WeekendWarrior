@@ -26,10 +26,25 @@ if '-e' in sys.argv:
     os.system('echo '+encoded+' >> encrypted.txt')
     os.system('echo '+base64.b64encode(secret)+' >> key.txt')
 
+if '-eF' in sys.argv:
+    content = ''
+    for line in utils.swap(sys.argv[2], False):
+        content += line+'\n'
+    # generate a random secret key
+    secret = os.urandom(BLOCK_SIZE)
+    # create a cipher object using the random secret
+    cipher = AES.new(secret)
+    # encode a string
+    encoded = EncodeAES(cipher, content)
+    os.system('echo ' + encoded + ' >> encrypted.txt')
+    os.system('echo ' + base64.b64encode(secret) + ' >> key.txt')
+
 if '-d' in sys.argv:
     # generate a random secret key
     secret = base64.b64decode(utils.swap('key.txt',False).pop())
-    encoded = utils.swap('encrypted.txt', False).pop()
+    encoded = ''
+    for ln in utils.swap('encrypted.txt', False):
+        encoded += ln+' '
     # create a cipher object using the random secret
     cipher = AES.new(secret)
     # decode the encoded string

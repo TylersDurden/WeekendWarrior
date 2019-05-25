@@ -24,6 +24,7 @@ def sort_by_size(wordbag):
         bins[size] = len(words[size])
     return words, bins
 
+
 def wordsearch(target,close, verbose):
     found = False
     if close:
@@ -54,16 +55,24 @@ def wordsearch(target,close, verbose):
     else:
         return found
 
+
 def bow_hist(bOw):
+    """
+    Bag_Of_Words_Histogram
+    :param bOw:
+    :return:
+    """
     plt.bar(bOw.keys(),bOw.values())
     plt.title('Bag Of Words Histogram [Word Length]')
     plt.xlabel('Word Length [Letters]')
     plt.ylabel('N Words')
     plt.show()
 
+
 word_bag = utils.swap('words.txt', False)
 sentiment = {}
 sorted_bag, binned = sort_by_size(word_bag)
+
 
 def main():
     t0 = time.time()
@@ -77,9 +86,10 @@ def main():
         target = sys.argv[2]
         if '-similar' in sys.argv:
             close = True
-        result = wordsearch(targetclose,True)
+        result = wordsearch(target, close,True)
 
     print '\033[1m['+str(time.time()-t0)+'s Elapsed]\033[0m'
+
 
 if __name__ == '__main__':
     main()
