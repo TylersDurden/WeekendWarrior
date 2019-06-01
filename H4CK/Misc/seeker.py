@@ -43,18 +43,14 @@ lip, eip = discover_ip_self()
 # Initialize Shodan API Key and get Stats
 api_key = retrieve_api_key(True)
 shod = shodan.Shodan(api_key)
-
 print shod.info()
-self = finger(shod, eip)
-for field in self.keys():
-    print field + ' : ' + str(self[field])
+
+
+if '-self' in sys.argv:
+    self = finger(shod, eip)
+    for field in self.keys():
+        print field + ' : ' + str(self[field])
 '''
 Important fields: 
-data
-ports
-lattitude
-longitude
-isp
-org
-region_code
+data, ports, lattitude, longitude, isp, org, region_code
 '''

@@ -1,0 +1,35 @@
+import time
+import sys
+import os
+
+t0 = time.time()
+
+def swap(fname, destroy):
+	data = []
+	for line in open(fname, 'r').readlines():
+		data.append(line.replace('\n', ''))
+	if destroy:
+		os.remove(fname)
+	return data 
+
+scans = 5
+
+
+os.system('touch NX.txt')
+iface = 'wlp2s0'
+find_aps = 'iw ' + iface + ' scan | grep SSID:* | cut -b 8-20 >> ssids.txt'
+os.system(find_aps)
+networks = []
+aps_raw = swap('ssids.txt', False)
+for ap in aps_raw:
+    if ap not in networks and len(list(ap)) >= 1:
+        networks.append(ap)
+if 'ID List' in networks:
+    networks.remove('ID List')
+
+NX = set(networks)
+data = ''
+for nx in NX:
+	data += nx +'\n'
+open('NX.txt','w').write(data)
+

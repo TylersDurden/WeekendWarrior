@@ -1,0 +1,7 @@
+hpsetup
+FiOS-9U8TT-5G
+catAI
+\x00\x00\x00\
+FiOS-9U8TT
+SeqmentX
+7UKQ2

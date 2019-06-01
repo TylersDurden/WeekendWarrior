@@ -4,6 +4,7 @@ import utils
 import sys
 import os
 
+
 class MetaAgent:
     wiki_src = 'https://en.wikipedia.org/wiki/'
     subject = ''
@@ -18,9 +19,11 @@ class MetaAgent:
         fd = os.open(topic+'_result'+".txt",os.O_RDWR)
         ret = os.write(fd,raw_data)
 
+
 class Knowledge:
     kb = {}
     vocabulary = list()
+
     def __init__(self):
         self.initialize()
 
@@ -35,6 +38,7 @@ class Knowledge:
         vocabulary = utils.swap('words.txt', False)
         print '\033[1m\033[34m%d Words Added to Vocabulary\033[0m' % (len(vocabulary))
 
+
 def fetch_resource(url):
     user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
     values = {'name': 'KnowledgeBot',
@@ -46,6 +50,7 @@ def fetch_resource(url):
     response = urllib2.urlopen(req)
     the_page = response.read()
     return the_page
+
 
 if 'get' in sys.argv:
     MetaAgent(sys.argv[2])

@@ -1,7 +1,8 @@
 from Crypto.Random import get_random_bytes
 import numpy as np
 import paramiko
-import socket
+import shodan
+import time
 import os
 
 
@@ -23,6 +24,18 @@ def ssh_command(ip, user, password, command):
         ssh_session.exec_command(command)
         response = ssh_session.recv(1024)
         return response
+
+
+def shodan_init():
+    cmd = 'shodan init $(cat $(locate shokey))'
+    os.system(cmd)
+
+
+def inline_shodan_init():
+    os.system('locate shokey >> loc.txt')
+    key_file = swap('loc.txt', True).pop()
+    api_key = swap(key_file,False).pop()
+    return shodan.Shodan(api_key)
 
 
 class Host:
@@ -83,15 +96,25 @@ class Host:
                 self.PATH = self.os_info['env'][field]
             if field == 'HOME':
                 self.HOME = self.os_info['env'][field]
-                print '\033[1m\033[33mHOME: '+self.os_info['env'][field]
+                print '\033[1m\033[33mHOME: '+self.os_info['env'][field]+'\033[0m'
             if field == 'DESKTOP_SESSION':
                 self.DESKTOP_SESSION = self.os_info['env'][field]
-                print '\033[1m\033[95mSESSION: '+self.os_info['env'][field]
+                print '\033[1m\033[95mSESSION: '+self.os_info['env'][field]+'\033[0m'
 
 
 def main():
-    localhost = Host()
-    localhost.display_host()
+    # localhost = Host()
+    # localhost.display_host()
+    print '\033[31m***Initializing SHODAN API connection ***\033[0m'
+    api = inline_shodan_init()
+    ssh_machines = api.search('ssh')
+    ips = []
+    for result in ssh_machines['matches']:
+        ips.append(result['ip_str'])
+        print 'Doing reverse lookup on %s' % result['ip_str']
+        os.system('host '+result['ip_str']+' >> hosts.txt')
+    hosts = swap('hosts.txt', False)
+    print str(len(hosts)) + ' Hosts Found '
 
 
 if __name__ == '__main__':

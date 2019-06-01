@@ -4,6 +4,20 @@ import sys
 import os
 
 
+def host_enum(verbose):
+    cmd = 'for i in `seq 1 255`;do host 192.168.1.* >> nx.txt; done'
+    os.system(cmd)
+    hosts = list()
+    for line in open('nx.txt', 'r'):
+        try:
+            comp = line.split(' domain name pointer ')[1]
+            hosts.append(comp)
+            if verbose:
+                print '* '+comp
+        except IndexError:
+            pass
+
+
 t0 = time.time()
 
 if '-e' in sys.argv:
@@ -39,3 +53,5 @@ if '-sniff' in sys.argv:
     print networks
     print '\033[32m\033[1m[DONE\033[0m\033[1m ' + str(time.time() - t0) + 's Elapsed]\033[0m'
 
+if '-list' in sys.argv:
+    host_enum(True)
